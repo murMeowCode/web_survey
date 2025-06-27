@@ -6,3 +6,4 @@ router = APIRouter()
 router.include_router(router=api_router)
 
 app = FastAPI()
+app.include_router(router)
