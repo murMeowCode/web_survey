@@ -1,18 +1,18 @@
 """routers for users ops"""
 #pylint: disable=W0621
 from datetime import timedelta
-from fastapi import APIRouter, Depends,HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError
 import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from main_auth.core.database import get_async_session
 from main_auth.core.jwt_logic import authenticate_user
-from main_auth.core.auth import fastapi_users
 from main_auth.core.jwt_logic import create_access_token, create_refresh_token, get_user_by_id
-from main_auth.schemas.user import UserCreate, UserRead, UserUpdate
 from main_auth.schemas.token import AccessToken, TokenPair
 from main_auth.core.config import Settings
+from main_auth.schemas.user import UserCreate, UserRead
+from main_auth.crud.user import create_user
 
 router = APIRouter()
 
@@ -30,9 +30,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
     access_token_expires = timedelta(minutes=Settings().access_token_expire_minutes)
     access_token = create_access_token(
-        data={"sub": user.id}, expires_delta=access_token_expires
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
-    refresh_token = create_refresh_token(data={"sub": user.id})
+    refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     return {
         "access_token": access_token,
@@ -45,7 +45,7 @@ async def refresh_token(refresh_token: str, session : AsyncSession = Depends(get
     try:
         payload = jwt.decode(refresh_token, Settings().secret_key,
                              algorithms=[Settings().algorithm])
-        user_id: int = payload.get("sub")
+        user_id = int(payload.get("sub"))
         if user_id is None:
             raise HTTPException(
                 status_code=401,
@@ -56,7 +56,7 @@ async def refresh_token(refresh_token: str, session : AsyncSession = Depends(get
 
         access_token_expires = timedelta(minutes=Settings().access_token_expire_minutes)
         new_access_token = create_access_token(
-            data={"sub": user.id}, expires_delta=access_token_expires
+            data={"sub": str(user.id)}, expires_delta=access_token_expires
         )
 
         return {
@@ -67,22 +67,8 @@ async def refresh_token(refresh_token: str, session : AsyncSession = Depends(get
             status_code=401,
             detail="Invalid refresh token") from exc
 
-router.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix='/auth',
-    tags=['auth']
-)
-
-router.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix='/users',
-    tags=['users']
-)
-
-@router.delete('/users/{id}', tags=['users'], deprecated=True)
-def delete_user(id: int):  #pylint: disable=W0622
-    """Не используйте удаление, деактивируйте пользователей."""
-    raise HTTPException(
-        status_code=405,
-        detail="Удаление пользователей запрещено!"
-    )
+@router.post("/auth/register", response_model=UserRead, tags= ['auth'])
+async def register(user_data : UserCreate, session : AsyncSession = Depends(get_async_session)):
+    """Регистрация нового пользователя"""
+    user = await create_user(session=session,user_data=user_data)
+    return user

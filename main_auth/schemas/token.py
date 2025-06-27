@@ -5,6 +5,6 @@ class AccessToken(BaseModel):
     """Схема для возвращения токена доступа"""
     access_token: str
 
-class TokenPair(BaseModel):
+class TokenPair(AccessToken):
     """Схема для возвращения токенов"""
     refresh_token: str | None = None
