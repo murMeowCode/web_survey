@@ -28,8 +28,8 @@ class TestUpdateMeEndpoint(unittest.IsolatedAsyncioTestCase):
             "exp": datetime.now() + timedelta(minutes=30)
         }, Settings().secret_key, algorithm=Settings().algorithm)
 
-    @patch("api.users.get_current_user")
-    @patch("api.users.get_async_session")
+    @patch("main_auth.api.users.get_current_user")
+    @patch("main_auth.api.users.get_async_session")
     async def test_update_email_success(self, mock_get_session, mock_get_user):
         """Тест успешной смены почты"""
         # Setup mocks
@@ -52,12 +52,12 @@ class TestUpdateMeEndpoint(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.json()["email"], "new@example.com")
         mock_session.commit.assert_awaited_once()
 
-    @patch("api.users.get_current_user")
+    @patch("main_auth.api.users.get_current_user")
     async def test_update_password(self, mock_get_user):
         """Тест изменения пароля"""
         mock_get_user.return_value = self.test_user
 
-        with patch("api.users.get_password_hash") as mock_hash:
+        with patch("main_auth.api.users.get_password_hash") as mock_hash:
             mock_hash.return_value = "new_hashed_password"
 
             response = self.client.patch(

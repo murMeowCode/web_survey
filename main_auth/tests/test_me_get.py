@@ -31,7 +31,7 @@ class TestMeEndpoints(unittest.IsolatedAsyncioTestCase):
 
     async def test_get_me_success(self):
         """Проверка успешного доступа"""
-        with patch("api.users.get_current_user") as mock_get_user:
+        with patch("main_auth.api.users.get_current_user") as mock_get_user:
             mock_get_user.return_value = self.test_user
 
             response = self.client.get(
