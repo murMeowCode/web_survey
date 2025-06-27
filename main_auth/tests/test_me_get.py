@@ -5,9 +5,9 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from fastapi import status
 from jose import jwt
-from main import app
-from models.user import User
-from core.config import Settings
+from main_auth.main import app
+from main_auth.models.user import User
+from main_auth.core.config import Settings
 
 class TestMeEndpoints(unittest.IsolatedAsyncioTestCase):
     """Класс для теста эндпоинта"""
