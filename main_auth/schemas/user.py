@@ -1,0 +1,11 @@
+"""Описание схем для работы с пользователем"""
+from fastapi_users import schemas
+
+class UserRead(schemas.BaseUser[int]):
+    """Схема для чтения из БД"""
+
+class UserCreate(schemas.BaseUserCreate):
+    """Схема для создания пользователя"""
+
+class UserUpdate(schemas.BaseUserUpdate):
+    """Схема для изменения пользователя"""
