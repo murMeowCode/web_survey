@@ -5,7 +5,7 @@ from passlib import context
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from main_auth.core.config import Settings
-from main_auth.core.utils import get_user_by_id
+from main_auth.core.utils import get_user_by_email, get_user_by_id
 
 pwd_context = context.CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/jwt/login")
@@ -51,4 +51,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     # Здесь должна быть ваша логика получения пользователя из БД
     user = await get_user_by_id(user_id)
+    return user
+
+async def authenticate_user(email: str, password: str):
+    """проверка правильности введенных учетных данных"""
+    user = await get_user_by_email(email)
+    if not user:
+        return False
+    if not verify_password(password, user.hashed_password):
+        return False
     return user
