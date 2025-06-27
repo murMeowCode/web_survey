@@ -57,7 +57,7 @@ class TestUpdateMeEndpoint(unittest.IsolatedAsyncioTestCase):
         """Тест изменения пароля"""
         mock_get_user.return_value = self.test_user
 
-        with patch("main_auth.api.users.get_password_hash") as mock_hash:
+        with patch("main_auth.crud.user.get_password_hash") as mock_hash:
             mock_hash.return_value = "new_hashed_password"
 
             response = self.client.patch(
