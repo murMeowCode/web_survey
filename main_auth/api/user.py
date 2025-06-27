@@ -31,3 +31,9 @@ def delete_user(id: int):  #pylint: disable=W0622
         status_code=405,
         detail="Удаление пользователей запрещено!"
     )
+
+@router.post("/auth/jwt/refresh",tags=['auth'])
+async def refresh_token(refresh_token: str): #pylint: disable=W0621
+    """Эндпоинт для получения нового токена"""
+    new_access_token = await auth_backend.transport.get_login_response(refresh_token)
+    return {"access_token": new_access_token}
