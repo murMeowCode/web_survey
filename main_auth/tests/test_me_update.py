@@ -43,7 +43,7 @@ class TestUpdateMeEndpoint(unittest.IsolatedAsyncioTestCase):
         mock_session.refresh = AsyncMock()
 
         response = self.client.patch(
-            "/me",
+            "/users/me",
             json={"email": "new@example.com"},
             headers={"Authorization": f"Bearer {self.valid_token}"}
         )
@@ -61,7 +61,7 @@ class TestUpdateMeEndpoint(unittest.IsolatedAsyncioTestCase):
             mock_hash.return_value = "new_hashed_password"
 
             response = self.client.patch(
-                "/me",
+                "/users/me",
                 json={"password": "new_password"},
                 headers={"Authorization": f"Bearer {self.valid_token}"}
             )
@@ -71,5 +71,5 @@ class TestUpdateMeEndpoint(unittest.IsolatedAsyncioTestCase):
 
     async def test_update_no_auth(self):
         """Попытка изменения без аутентификации"""
-        response = self.client.patch("/me", json={"email": "new@example.com"})
+        response = self.client.patch("/users/me", json={"email": "new@example.com"})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

@@ -35,7 +35,7 @@ class TestMeEndpoints(unittest.IsolatedAsyncioTestCase):
             mock_get_user.return_value = self.test_user
 
             response = self.client.get(
-                "/me",
+                "/users/me",
                 headers={"Authorization": f"Bearer {self.valid_token}"}
             )
 
@@ -44,13 +44,13 @@ class TestMeEndpoints(unittest.IsolatedAsyncioTestCase):
 
     async def test_get_me_unauthorized(self):
         """Тест с неавторизованным доступом"""
-        response = self.client.get("/me")
+        response = self.client.get("/users/me")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     async def test_get_me_invalid_token(self):
         """Тест с некорректным токеном"""
         response = self.client.get(
-            "/me",
+            "/users/me",
             headers={"Authorization": "Bearer invalid_token"}
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
