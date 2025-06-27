@@ -1,6 +1,5 @@
 """crud operations for user"""
 from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
