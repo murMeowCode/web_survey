@@ -1,14 +1,14 @@
 """вспомогательные функции"""
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from main_auth.core.database import get_async_session
 from main_auth.models.user import User
 
-async def get_user_by_id(user_id : int, session : AsyncSession = Depends(get_async_session)):
+async def get_user_by_id(user_id : int, session : AsyncSession):
     """Получение пользователя из БД по его id"""
-    user = await session.execute(select(User).where(User.id == user_id))
+    result = await session.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
     if user is None:
         raise HTTPException(
             status_code=404,
@@ -16,9 +16,11 @@ async def get_user_by_id(user_id : int, session : AsyncSession = Depends(get_asy
         )
     return user
 
-async def get_user_by_email(email : EmailStr, session : AsyncSession = Depends(get_async_session)):
+async def get_user_by_email(email: EmailStr, session: AsyncSession):
     """Получение пользователя из БД по его email"""
-    user = await session.execute(select(User).where(User.email == email))
+    result = await session.execute(select(User).where(User.email == email))
+    user = result.scalars().first()  # Get the first result or None
+
     if user is None:
         raise HTTPException(
             status_code=404,

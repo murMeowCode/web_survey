@@ -5,8 +5,9 @@ from fastapi import APIRouter, Depends,HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError
 import jwt
-
-from main_auth.core.utils import authenticate_user
+from sqlalchemy.ext.asyncio import AsyncSession
+from main_auth.core.database import get_async_session
+from main_auth.core.jwt_logic import authenticate_user
 from main_auth.core.auth import fastapi_users
 from main_auth.core.jwt_logic import create_access_token, create_refresh_token, get_user_by_id
 from main_auth.schemas.user import UserCreate, UserRead, UserUpdate
@@ -16,9 +17,10 @@ from main_auth.core.config import Settings
 router = APIRouter()
 
 @router.post("/auth/jwt/login", response_model=TokenPair, tags=["auth"])
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
+                                 session : AsyncSession = Depends(get_async_session)):
     """Получение токенов доступа при аутентификации"""
-    user = await authenticate_user(form_data.username, form_data.password)
+    user = await authenticate_user(form_data.username, form_data.password,session)
     if not user:
         raise HTTPException(
             status_code=401,
@@ -38,7 +40,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     }
 
 @router.post("/auth/jwt/refresh", response_model=AccessToken, tags=["auth"])
-async def refresh_token(refresh_token: str):
+async def refresh_token(refresh_token: str, session : AsyncSession = Depends(get_async_session)):
     """Логика получения нового токена доступа"""
     try:
         payload = jwt.decode(refresh_token, Settings().secret_key,
@@ -50,7 +52,7 @@ async def refresh_token(refresh_token: str):
                 detail="Invalid refresh token"
             )
 
-        user = await get_user_by_id(user_id)
+        user = await get_user_by_id(user_id,session)
 
         access_token_expires = timedelta(minutes=Settings().access_token_expire_minutes)
         new_access_token = create_access_token(

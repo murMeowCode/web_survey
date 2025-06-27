@@ -4,6 +4,7 @@ from jose import JWTError, jwt
 from passlib import context
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 from main_auth.core.config import Settings
 from main_auth.core.utils import get_user_by_email, get_user_by_id
 
@@ -53,9 +54,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     user = await get_user_by_id(user_id)
     return user
 
-async def authenticate_user(email: str, password: str):
+async def authenticate_user(email: str, password: str, session : AsyncSession):
     """проверка правильности введенных учетных данных"""
-    user = await get_user_by_email(email)
+    user = await get_user_by_email(email, session)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
