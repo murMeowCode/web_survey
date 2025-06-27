@@ -25,4 +25,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --disable=R0903 --disable=E0401 $(git ls-files 'app/*/*.py')
+        pylint --disable=R0903 --disable=E0401 $(git ls-files 'main_auth/*/*.py')
