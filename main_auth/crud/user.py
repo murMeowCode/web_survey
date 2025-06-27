@@ -1,5 +1,6 @@
 """crud operations for user"""
 from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -48,3 +49,20 @@ async def get_user_by_email(email: EmailStr, session: AsyncSession):
             detail='Пользователь не найден!'
         )
     return user
+
+async def update_user_info(new_data, current_user, session: AsyncSession):
+    """Изменение информации о пользователе"""
+    update_data = new_data.dict(exclude_unset=True)
+
+    print(f"Updating with: {update_data}")  # Для отладки
+
+    for field, value in update_data.items():
+        if hasattr(current_user, field):
+            setattr(current_user, field, value)
+
+    if 'password' in update_data:
+        current_user.hashed_password = get_password_hash(update_data['password'])
+
+    await session.commit()
+    await session.refresh(current_user)
+    return current_user

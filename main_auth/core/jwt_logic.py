@@ -31,7 +31,8 @@ def create_refresh_token(data: dict):
     data.update({"exp": expire})
     return jwt.encode(data, Settings().secret_key, algorithm=Settings().algorithm)
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme),
+                            session : AsyncSession = Depends(get_async_session)):
     """Логика получения пользователя по токену"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -40,13 +41,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, Settings().secret_key, algorithms=[Settings().algorithm])
-        user_id: id = payload.get("id")
+        user_id =  int(payload.get("sub"))
         if user_id is None:
             raise credentials_exception
     except JWTError as exc:
         raise credentials_exception from exc
 
-    user = await get_user_by_id(user_id, Depends(get_async_session))
+    user = await get_user_by_id(user_id, session)
     return user
 
 async def authenticate_user(email: str, password: str, session : AsyncSession):
