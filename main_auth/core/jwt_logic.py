@@ -53,7 +53,15 @@ async def authenticate_user(email: str, password: str, session : AsyncSession):
     """проверка правильности введенных учетных данных"""
     user = await get_user_by_email(email, session)
     if not user:
-        return False
+        raise HTTPException(
+            status_code=401,
+            detail="Пользователя с такой электронной почтой не существует",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     if not verify_password(password, user.hashed_password):
-        return False
+        raise HTTPException(
+            status_code=401,
+            detail="Неверно введенный пароль",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user
