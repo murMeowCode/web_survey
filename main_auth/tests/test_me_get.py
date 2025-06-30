@@ -40,7 +40,7 @@ class TestMeEndpoints(unittest.IsolatedAsyncioTestCase):
             )
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(response.json()["email"], "test@example.com")
+            self.assertEqual(response.json()["email"], "user@example.com")
 
     async def test_get_me_unauthorized(self):
         """Тест с неавторизованным доступом"""
