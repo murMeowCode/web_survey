@@ -8,7 +8,7 @@ from main_auth.core.nats_utils import request_oauth_verification, get_nats_clien
 from main_auth.core.jwt_logic import create_access_token, create_refresh_token
 from main_auth.core.database import get_async_session
 
-router = APIRouter(prefix="/oauth")
+router = APIRouter(prefix="/oauth", tags=['oauth'])
 
 @router.post("/google")
 async def auth_via_google(
