@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """описание полей настроек"""
     database_url : str
-    secret : str
     secret_key : str
     algorithm : str
     access_token_expire_minutes : int
