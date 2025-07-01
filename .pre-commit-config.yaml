@@ -12,9 +12,9 @@ repos:
       - id: pylint
         name: pylint (main_auth)
         entry: pylint --disable=R0903,E0401
-        language: system
+        language: python  # ← Изменили на 'python' вместо 'system'
         types: [python]
         files: ^main_auth/
-        exclude: ^$  # Важно: исключает пустые совпадения
-        pass_filenames: true  # Передаёт имена файлов в pylint
+        additional_dependencies: [pylint]  # Теперь работает
+        args: [--disable=R0903,E0401]
         verbose: true
