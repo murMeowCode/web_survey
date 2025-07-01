@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     algorithm : str
     access_token_expire_minutes : int
     refresh_token_expire_days : int
+    nats_url : str
 
     class Config:
         """путь к файлу среды"""
