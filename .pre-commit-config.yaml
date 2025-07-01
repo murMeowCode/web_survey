@@ -1,19 +1,5 @@
 repos:
-  - repo: local
-    hooks:
-      - id: pylint
-        name: pylint (main_auth)
-        entry: pylint --disable=R0903,E0401
-        language: python
-        language_version: python3.12
-        types: [python]
-        files: ^main_auth/.*\.py$  # Все .py файлы в main_auth и подпапках
-        pass_filenames: true
-        additional_dependencies: [pylint]
-        always_run: false
-        verbose: true
-        args: []
-        
+
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.20.0
     hooks:

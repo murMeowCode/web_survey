@@ -12,14 +12,14 @@ async def db_engine():
         os.getenv("DATABASE_URL"),
         echo=True  # Включаем логирование SQL-запросов для отладки
     )
-    
+
     # Явно создаем все таблицы
     async with engine.begin() as conn:
         print("Creating tables...")
         await conn.run_sync(Base.metadata.create_all)
-    
+
     yield engine
-    
+
     # Очищаем БД после тестов
     async with engine.begin() as conn:
         print("Dropping tables...")
