@@ -10,3 +10,6 @@ major_version_zero = true
 message_template = "{msg}"  # Шаблон сообщения коммита
 example = "feat: add new feature"  # Пример коммита
 schema = "<type>(<scope>): <subject>"  # Схема коммита
+
+[tool.pytest.ini_options]
+env_files = [".env.test"]

@@ -1,4 +1,4 @@
 .env
 venv
 alembic*
-__pycache__
+*cache*

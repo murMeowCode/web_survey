@@ -1,6 +1,19 @@
 repos:
+  # 1. Проверка Conventional Commits
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.20.0
     hooks:
       - id: commitizen
         stages: [commit-msg]
+
+  # 2. Проверка pylint для Python-файлов
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint (main_auth)
+        entry: pylint --disable=R0903,E0401
+        language: system
+        types: [python]
+        files: ^main_auth/.*\.py$
+        verbose: true
+        require_serial: true
