@@ -12,4 +12,13 @@ example = "feat: add new feature"  # Пример коммита
 schema = "<type>(<scope>): <subject>"  # Схема коммита
 
 [tool.pytest.ini_options]
-env_files = [".env.test"]
+env_files = ["test.env"]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "python-dotenv",
+    "asyncpg",
+]
