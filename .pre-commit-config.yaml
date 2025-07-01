@@ -6,7 +6,7 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
-  # 2. Проверка pylint для Python-файлов
+  # 2. Проверка pylint (исправленная версия)
   - repo: local
     hooks:
       - id: pylint
@@ -14,6 +14,7 @@ repos:
         entry: pylint --disable=R0903,E0401
         language: system
         types: [python]
-        files: ^main_auth/.*\.py$
+        files: ^main_auth/
+        exclude: ^$  # Важно: исключает пустые совпадения
+        pass_filenames: true  # Передаёт имена файлов в pylint
         verbose: true
-        require_serial: true
