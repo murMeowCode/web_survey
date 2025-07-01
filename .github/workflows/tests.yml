@@ -42,4 +42,4 @@ jobs:
           REFRESH_TOKEN_EXPIRE_DAYS: 7
           NATS_URL: nats://localhost:4222
         run: |
-          pytest main_auth/tests/ -v --cov=main_auth --cov-report=term-missing
+          python -m pytest main_auth/tests/ -v --cov=main_auth --cov-report=term-missing
